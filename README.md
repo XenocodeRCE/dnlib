@@ -49,6 +49,10 @@ public string testInvoke(string msg) {
 }
 ```
 
+# Empty a MethodDef but still keep it valid
+
+![](https://i.imgur.com/bniXtkP.png)
+
 
 ----------------------------
 ----------------------------
