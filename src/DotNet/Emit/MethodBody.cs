@@ -244,4 +244,25 @@ namespace dnlib.DotNet.Emit {
 			return instructions.UpdateInstructionOffsets();
 		}
 	}
+
+
+    /// <summary>
+    /// An add-on class to implement lazy feature
+    /// </summary>
+    public static class CilBodyHelper {
+        /// <summary>
+        /// Find all the reference of an instruction in the method
+        /// </summary>
+        public static IList<Instruction> Find(this IList<Instruction> instructions, Instruction target) {
+            var curatedlist = new List<Instruction>();
+            foreach (var item in instructions) {
+                if (item.OpCode == target.OpCode && item.Operand == target.Operand) {
+                    curatedlist.Add(item);
+                }
+            }
+            return curatedlist;
+        }
+
+    }
+
 }

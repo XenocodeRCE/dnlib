@@ -8,3 +8,7 @@
 /Release/
 /Examples/bin/
 *.tmp_proj
+*.lock
+*.ide
+*.ide-shm
+*.ide-wal

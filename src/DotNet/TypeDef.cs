@@ -1019,11 +1019,11 @@ namespace dnlib.DotNet {
 			return AllTypesHelper.Types(NestedTypes);
 		}
 
-		/// <summary>
-		/// Gets an enum's underlying type or <c>null</c> if none. Should only be called
-		/// if this is an enum.
-		/// </summary>
-		public TypeSig GetEnumUnderlyingType() {
+        /// <summary>
+        /// Gets an enum's underlying type or <c>null</c> if none. Should only be called
+        /// if this is an enum.
+        /// </summary>
+        public TypeSig GetEnumUnderlyingType() {
 			foreach (var field in Fields.GetSafeEnumerable()) {
 				if (!field.IsLiteral && !field.IsStatic) {
 					var fieldSig = field.FieldSig;
@@ -2411,4 +2411,22 @@ namespace dnlib.DotNet {
 			}
 		}
 	}
+
+    /// <summary>
+    /// An add-on class to implement lazy feature
+    /// </summary>
+    public static class TypeDefHelper {
+
+        /// <summary>
+        /// Gets all MethodDef of a TypeDef that has a CilBody
+        /// </summary>
+        public static IEnumerable<MethodDef> Methods(this TypeDef type, bool b = true) {
+            var curatedlist = new List<MethodDef>();
+            foreach (var item in type.Methods) {
+                if (!item.HasBody) continue;
+                curatedlist.Add(item);
+            }
+            return curatedlist;
+        }
+    }
 }

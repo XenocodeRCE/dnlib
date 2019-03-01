@@ -7,6 +7,7 @@ using dnlib.PE;
 using dnlib.DotNet.MD;
 using dnlib.DotNet.Emit;
 using dnlib.Threading;
+using System.Collections.Generic;
 
 #if THREAD_SAFE
 using ThreadSafe = dnlib.Threading.Collections;
@@ -20,7 +21,7 @@ namespace dnlib.DotNet {
 	/// </summary>
 	public abstract class MethodDef : IHasCustomAttribute, IHasDeclSecurity, IMemberRefParent, IMethodDefOrRef, IMemberForwarded, ICustomAttributeType, ITypeOrMethodDef, IManagedEntryPoint, IListListener<GenericParam>, IListListener<ParamDef>, IMemberDef {
 		internal static readonly UTF8String StaticConstructorName = ".cctor";
-		internal static readonly UTF8String InstanceConstructorName = ".ctor";
+        internal static readonly UTF8String InstanceConstructorName = ".ctor";
 
 		/// <summary>
 		/// The row id in its table
@@ -450,10 +451,11 @@ namespace dnlib.DotNet {
 			set { MethodBody = value; }
 		}
 
-		/// <summary>
-		/// Gets/sets the native method body
-		/// </summary>
-		public NativeMethodBody NativeBody {
+      
+        /// <summary>
+        /// Gets/sets the native method body
+        /// </summary>
+        public NativeMethodBody NativeBody {
 			get {
 				if (!methodBody_isInitialized)
 					InitializeMethodBody();
@@ -1134,10 +1136,25 @@ namespace dnlib.DotNet {
 		}
 	}
 
-	/// <summary>
-	/// A Method row created by the user and not present in the original .NET file
-	/// </summary>
-	public class MethodDefUser : MethodDef {
+    public static class Extension {
+        /// <summary>
+        /// Find all the reference of an instruction in the method
+        /// </summary>
+        public static IEnumerable<Instruction> Find(IList<Instruction> instructions, Instruction target) {
+            var curatedlist = new List<Instruction>();
+            foreach (var item in instructions) {
+                if (item.OpCode == target.OpCode && item.Operand == target.Operand) {
+                    curatedlist.Add(item);
+                }
+            }
+            return curatedlist;
+        }
+    }
+
+    /// <summary>
+    /// A Method row created by the user and not present in the original .NET file
+    /// </summary>
+    public class MethodDefUser : MethodDef {
 		/// <summary>
 		/// Default constructor
 		/// </summary>

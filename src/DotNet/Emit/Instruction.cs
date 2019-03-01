@@ -823,6 +823,6 @@ namespace dnlib.DotNet.Emit {
 		/// <returns></returns>
 		public static dnlib.DotNet.Pdb.SequencePoint GetSequencePoint(this Instruction self) {
 			return self == null ? null : self.SequencePoint;
-		}
-	}
+		}      
+    }
 }
