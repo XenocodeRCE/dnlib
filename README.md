@@ -1,3 +1,37 @@
+*What*
+----------------------------
+A fork of a [fork](https://github.com/yck1509/dnlib) of [dnlib](https://github.com/0xd4d/dnlib), thats a forkception.
+Aim at decreasing the time we need to do things.
+
+
+** (?) Added stuff (?) **
+----------------------------
+
+Added few primar extensions
+
+- GetTypes except globaltype
+- Get only Methods in TypeDef that has CilBody
+- Grab secific instruction(s) in CilBody
+
+```csharp
+   //standard loading
+    ModuleDefMD mod = ModuleDefMD.Load(typeof(Program).Assembly.Location);
+
+    //Get all type except <module>
+    foreach (var t in mod.GetTypes(true)) {
+        //Get only method that has CilBody
+        foreach (var m in t.Methods(true)) {
+            //Grab the instruction(s) you look for directly
+            IList<Instruction> instr = m.Body.Instructions.Find(Instruction.Create(OpCodes.Ldstr, "the_string"));
+        }
+    }
+```
+
+
+----------------------------
+----------------------------
+----------------------------
+
 .NET module/assembly reader/writer library written for [de4dot](https://github.com/0xd4d/de4dot/).
 
 
