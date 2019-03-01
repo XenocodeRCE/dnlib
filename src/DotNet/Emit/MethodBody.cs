@@ -1,6 +1,7 @@
 // dnlib: See LICENSE.txt for more info
 
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using dnlib.DotNet.Pdb;
 using dnlib.PE;
 using dnlib.Threading;
@@ -243,7 +244,7 @@ namespace dnlib.DotNet.Emit {
 		public uint UpdateInstructionOffsets() {
 			return instructions.UpdateInstructionOffsets();
 		}
-	}
+    }
 
 
     /// <summary>
@@ -263,6 +264,19 @@ namespace dnlib.DotNet.Emit {
             return curatedlist;
         }
 
+
+        public static byte[] GetILAsByteArray(this CilBody body) {
+            List<byte> list = new List<byte>();
+
+            foreach (var item in body.Instructions) {
+                var bytes = BitConverter.GetBytes(item.GetOpCode().Value);
+                foreach (var Byte in bytes) {
+                    list.Add(Byte);
+                }
+            }
+
+            return list.ToArray();
+        }
     }
 
 }

@@ -49,6 +49,24 @@ public string testInvoke(string msg) {
 }
 ```
 
+### InsertBefore/InsertAfter instruction in CilBody
+
+```csharp
+static void Main(string[] args) {
+   ModuleDefMD mod = ModuleDefMD.Load(typeof(Program).Assembly.Location);
+   foreach (var t in mod.GetTypes(true)) {
+       foreach (var m in t.Methods(true)) {
+           //InsertBefore / InsertAfter
+           m.Body.Instructions.InsertAfter(OpCodes.Switch.ToInstruction(), Instruction.CreateLdcI4(12));
+           m.Body.Instructions.InsertAfter(m.Body.Instructions[0], OpCodes.Ret.ToInstruction());
+
+           m.Body.Instructions.InsertBefore(OpCodes.Switch.ToInstruction(), OpCodes.Nop.ToInstruction());
+           m.Body.Instructions.InsertBefore(m.Body.Instructions[m.Body.Instructions.Count], OpCodes.Ret.ToInstruction());
+       }
+   }
+}
+```
+
 ### Empty a MethodDef but still keep it valid
 
 ![](https://i.imgur.com/bniXtkP.png)
