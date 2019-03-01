@@ -7,11 +7,10 @@ Aim at decreasing the time we need to do things.
 ** (?) Added stuff (?) **
 ----------------------------
 
-Added few primar extensions
+# GetTypes except globaltype
+# Get only Methods in TypeDef that has CilBody
+# Grab specific instruction(s) in CilBody
 
-- GetTypes except globaltype
-- Get only Methods in TypeDef that has CilBody
-- Grab secific instruction(s) in CilBody
 
 ```csharp
    //standard loading
@@ -25,6 +24,29 @@ Added few primar extensions
             IList<Instruction> instr = m.Body.Instructions.Find(Instruction.Create(OpCodes.Ldstr, "the_string"));
         }
     }
+```
+
+
+# Invoke MethodDef
+
+```csharp
+static void Main(string[] args) {
+            
+         ...
+
+    //Invoke MethodDef using MethodInfo
+    foreach (var m in t.Methods(true)) {
+        if(m.Name == "testInvoke") {
+            var k = m.Invoke(new object[] { "Hello World :-)" });
+        }
+    }
+}
+
+
+public string testInvoke(string msg) {
+   Console.WriteLine(msg);
+   return "ok";
+}
 ```
 
 
