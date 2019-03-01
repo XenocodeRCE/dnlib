@@ -9,8 +9,11 @@ namespace dnlib.Examples {
 	class Program {
         static void Main(string[] args) {
 
-            //standard loading
+
             ModuleDefMD mod = ModuleDefMD.Load(typeof(Program).Assembly.Location);
+            //Reflection-style Method fetched
+            MethodDef targetMethod = mod.ResolveMethod(0x040000E8);
+
 
             //Get all type except <module>
             foreach (var t in mod.GetTypes(true)) {
