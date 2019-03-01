@@ -4,12 +4,12 @@ A fork of a [fork](https://github.com/yck1509/dnlib) of [dnlib](https://github.c
 Aim at decreasing the time we need to do things.
 
 
-** (?) Added stuff (?) **
+# **(?) Added stuff (?)**
 ----------------------------
 
-# GetTypes except globaltype
-# Get only Methods in TypeDef that has CilBody
-# Grab specific instruction(s) in CilBody
+### GetTypes except globaltype
+### Get only Methods in TypeDef that has CilBody
+### Grab specific instruction(s) in CilBody
 
 
 ```csharp
@@ -27,7 +27,7 @@ Aim at decreasing the time we need to do things.
 ```
 
 
-# Invoke MethodDef
+### Invoke MethodDef
 
 ```csharp
 static void Main(string[] args) {
@@ -48,6 +48,10 @@ public string testInvoke(string msg) {
    return "ok";
 }
 ```
+
+### Empty a MethodDef but still keep it valid
+
+![](https://i.imgur.com/bniXtkP.png)
 
 
 ----------------------------
