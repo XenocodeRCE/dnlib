@@ -8,24 +8,15 @@ using System.Reflection;
 namespace dnlib.Examples {
 	class Program {
         static void Main(string[] args) {
-
-
             ModuleDefMD mod = ModuleDefMD.Load(typeof(Program).Assembly.Location);
-            //Reflection-style Method fetched
-            MethodDef targetMethod = mod.ResolveMethod(0x040000E8);
-
-
-            //Get all type except <module>
             foreach (var t in mod.GetTypes(true)) {
-                //Invoke MEthodDef using MethodInfo
                 foreach (var m in t.Methods(true)) {
-                    if (m.Name == "testInvoke") {
-                        var k = m.Invoke(new object[] { "Hello World :-)" });
-                    }
-                    m.Empty();
+                    //InsertBefore / InsertAfter
+                    m.Body.Instructions.InsertAfter(OpCodes.Switch.ToInstruction(), Instruction.CreateLdcI4(12));
+                    m.Body.Instructions.InsertAfter(m.Body.Instructions[0], OpCodes.Ret.ToInstruction());
 
-
-
+                    m.Body.Instructions.InsertBefore(OpCodes.Switch.ToInstruction(), OpCodes.Nop.ToInstruction());
+                    m.Body.Instructions.InsertBefore(m.Body.Instructions[m.Body.Instructions.Count], OpCodes.Ret.ToInstruction());
                 }
             }
         }

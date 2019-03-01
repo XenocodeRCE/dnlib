@@ -1136,7 +1136,8 @@ namespace dnlib.DotNet {
 		}
 	}
 
-    public static class Extension {
+    public static class Extensionn {
+
         /// <summary>
         /// Find all the reference of an instruction in the method
         /// </summary>
@@ -1188,6 +1189,87 @@ namespace dnlib.DotNet {
             method.Body.ExceptionHandlers.Clear();
             method.Body.Variables.Clear();
         }
+
+        /// <summary>
+        /// Resolve the MethodDef using its MDToken as int32
+        /// </summary>
+        public static MethodDef ResolveMethod(this ModuleDefMD mod, int MetadataToken, bool ResolveByToken = true) {
+            MethodDef method = null;
+
+            foreach (var t in mod.GetTypes()) {
+                foreach (var m in t.Methods) {
+                    if (m.MDToken.ToInt32() == MetadataToken) {
+                        method = m;
+                        break;
+                    }
+                }
+            }
+            if (method == null)
+                throw new Exception("Could not resolve the method with the given UINT MDToken !");
+            return method;
+        }
+
+        /// <summary>
+        /// Insert an Instruction in a CilBody after a specific Instruction
+        /// </summary>
+        /// <param name=""></param>
+        /// <param name="target"></param>
+        /// <param name="newinstruction"></param>
+        /// <returns></returns>
+        public static IList<Instruction> InsertAfter(this IList<Instruction> c, Instruction target, Instruction newinstruction) {
+            var instr = c;
+            for (int i = 0; i < instr.Count; i++) {
+                if(instr[i] == target) {
+                    instr.Insert(i + 1, newinstruction);
+                }
+            }
+            return c;
+        }
+
+        /// <summary>
+        /// Insert an Instruction in a CilBody after a specific Instruction
+        /// </summary>
+        /// <param name=""></param>
+        /// <param name="target"></param>
+        /// <param name="newinstruction"></param>
+        /// <returns></returns>
+        public static IList<Instruction> InsertAfter(this IList<Instruction> c, int index, Instruction newinstruction) {
+            var instr = c;
+            instr.Insert(index + 1, newinstruction);
+            return c;
+        }
+
+        /// <summary>
+        /// Insert an Instruction in a CilBody before a specific Instruction
+        /// </summary>
+        /// <param name=""></param>
+        /// <param name="target"></param>
+        /// <param name="newinstruction"></param>
+        /// <returns></returns>
+        public static IList<Instruction> InsertBefore(this IList<Instruction> c, Instruction target, Instruction newinstruction) {
+            var instr = c;
+            for (int i = 0; i < instr.Count; i++) {
+                if (instr[i] == target) {
+                    instr.Insert(i, newinstruction);
+                }
+            }
+            return c;
+        }
+
+        /// <summary>
+        /// Insert an Instruction in a CilBody before a specific Instruction
+        /// </summary>
+        /// <param name=""></param>
+        /// <param name="target"></param>
+        /// <param name="newinstruction"></param>
+        /// <returns></returns>
+        public static IList<Instruction> InsertBefore(this IList<Instruction> c, int index, Instruction newinstruction) {
+            var instr = c;
+            instr.Insert(index, newinstruction);
+            return c;
+        }
+
+
     }
 
     /// <summary>

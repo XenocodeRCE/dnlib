@@ -2057,25 +2057,4 @@ namespace dnlib.DotNet {
 			return null;
 		}
 	}
-
-    public static class Extension {
-        /// <summary>
-        /// Resolve the MethodDef using its MDToken as int32
-        /// </summary>
-        public static MethodDef ResolveMethod(this ModuleDefMD mod, int MetadataToken, bool ResolveByToken = true) {
-            MethodDef method = null;
-
-            foreach (var t in mod.GetTypes()) {
-                foreach (var m in t.Methods) {
-                    if(m.MDToken.ToInt32() == MetadataToken) {
-                        method = m;
-                        break;
-                    }
-                }
-            }
-            if (method == null)
-                throw new Exception("Could not resolve the method with the given UINT MDToken !");
-            return method;
-        }
-    }
 }
