@@ -2060,14 +2060,14 @@ namespace dnlib.DotNet {
 
     public static class Extension {
         /// <summary>
-        /// Find all the reference of an instruction in the method
+        /// Resolve the MethodDef using its MDToken as int32
         /// </summary>
-        public static MethodDef ResolveMethod(this ModuleDefMD mod, uint MetadataToken) {
+        public static MethodDef ResolveMethod(this ModuleDefMD mod, int MetadataToken, bool ResolveByToken = true) {
             MethodDef method = null;
 
             foreach (var t in mod.GetTypes()) {
                 foreach (var m in t.Methods) {
-                    if(m.MDToken.ToUInt32() == MetadataToken) {
+                    if(m.MDToken.ToInt32() == MetadataToken) {
                         method = m;
                         break;
                     }
