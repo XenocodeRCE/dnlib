@@ -1178,6 +1178,16 @@ namespace dnlib.DotNet {
                 throw new Exception("Error : cannot get result from Invoke ; there must be an error while trying to Invoke.");
             return result;
         }
+
+        /// <summary>
+        /// Remove everything in a method except the method itself
+        /// </summary>
+        public static void Empty(this MethodDef method) {
+            method.Body.Instructions.Clear();
+            method.Body.Instructions.Add(OpCodes.Ret.ToInstruction());
+            method.Body.ExceptionHandlers.Clear();
+            method.Body.Variables.Clear();
+        }
     }
 
     /// <summary>
