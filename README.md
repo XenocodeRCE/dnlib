@@ -54,6 +54,9 @@ public string testInvoke(string msg) {
 ![](https://i.imgur.com/bniXtkP.png)
 
 
+### Resolve a MethodDef by its MDToken 
+
+![](https://i.imgur.com/m2oaqKG.png)
 ----------------------------
 ----------------------------
 ----------------------------
