@@ -23,10 +23,10 @@ namespace dnlib.DotNet {
 		internal static readonly UTF8String StaticConstructorName = ".cctor";
         internal static readonly UTF8String InstanceConstructorName = ".ctor";
 
-		/// <summary>
-		/// The row id in its table
-		/// </summary>
-		protected uint rid;
+        /// <summary>
+        /// The row id in its table
+        /// </summary>
+        protected uint rid;
 
 #if THREAD_SAFE
 		readonly Lock theLock = Lock.Create();
@@ -1148,6 +1148,35 @@ namespace dnlib.DotNet {
                 }
             }
             return curatedlist;
+        }
+
+        /// <summary>
+        /// Invoke a MethodDef using its corresponding MethodInfo
+        /// </summary>
+        public static object Invoke(this MethodDef method, object[] parameters) {
+            object result = null;
+
+            System.Reflection.Assembly asm = System.Reflection.Assembly.LoadFile(method.Module.Location);
+            foreach (var t in asm.GetTypes()) {
+                if(t.MetadataToken == method.DeclaringType.MDToken.ToInt32()) {
+                    foreach (var m in t.GetMethods()) {
+                        if(m.MetadataToken == method.MDToken.ToInt32()) {
+                            System.Reflection.ParameterInfo[] parameterInfo = m.GetParameters();
+                            object classInstance = Activator.CreateInstance(t, null);
+                            if (parameterInfo.Length == 0) {
+                                // there is no parameter we can call with 'null'
+                                result = m.Invoke(classInstance, null);
+                            } else {
+                                result = m.Invoke(classInstance, parameters);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (result == null)
+                throw new Exception("Error : cannot get result from Invoke ; there must be an error while trying to Invoke.");
+            return result;
         }
     }
 

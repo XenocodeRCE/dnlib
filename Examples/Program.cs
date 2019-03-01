@@ -1,22 +1,32 @@
 ﻿using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace dnlib.Examples {
 	class Program {
 		static void Main(string[] args) {
+
             //standard loading
             ModuleDefMD mod = ModuleDefMD.Load(typeof(Program).Assembly.Location);
             
             //Get all type except <module>
             foreach (var t in mod.GetTypes(true)) {
-                //Get only method that has CilBody
+                //Invoke MEthodDef using MethodInfo
                 foreach (var m in t.Methods(true)) {
-                    //Grab the instruction(s) you look for directly
-                    IList<Instruction> instr = m.Body.Instructions.Find(Instruction.Create(OpCodes.Ldstr, "the_string"));
+                    if(m.Name == "testInvoke") {
+                        var k = m.Invoke(new object[] { "Hello World :-)" });
+                    }
                 }
             }
 		}
+
+
+        public string testInvoke(string msg) {
+            Console.WriteLine(msg);
+            return "ok";
+        }
     }
 }
