@@ -1,6 +1,8 @@
 // dnlib: See LICENSE.txt for more info
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 #if THREAD_SAFE
 using ThreadSafe = dnlib.Threading.Collections;
@@ -561,15 +563,51 @@ namespace dnlib.DotNet {
 			return null;
 		}
 
-		/// <summary>
-		/// Resolves an <see cref="IMethod"/> to a <see cref="MethodDef"/> and throws an exception
-		/// if it was not possible to resolve it. See also <see cref="ResolveMethodDef"/>. If
-		/// <paramref name="method"/> is a <see cref="MethodSpec"/>, then the
-		/// <see cref="MethodSpec.Method"/> property is resolved and returned.
-		/// </summary>
-		/// <param name="method">Method to resolve</param>
-		/// <returns>The <see cref="MethodDef"/></returns>
-		public static MethodDef ResolveMethodDefThrow(this IMethod method) {
+        public static System.Reflection.MethodInfo ResolveMethodInfo(this MethodDef method) {
+            int token = method.MDToken.ToInt32();
+            var mod = method.DeclaringType.Module;
+
+            System.Reflection.Assembly asm = System.Reflection.Assembly.LoadFile(mod.Location);
+
+            System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Public |
+                                System.Reflection.BindingFlags.NonPublic |
+                                System.Reflection.BindingFlags.Static |
+                                System.Reflection.BindingFlags.Instance |
+                                System.Reflection.BindingFlags.DeclaredOnly;
+
+         
+            foreach (var t in asm.GetTypes()) {
+                var source = t.GetMethods(flags);
+
+                var constructorMemberInfos = t.GetMember(".ctor",
+                    System.Reflection.BindingFlags.CreateInstance |
+                    System.Reflection.BindingFlags.Public |
+                    System.Reflection.BindingFlags.NonPublic |
+                    System.Reflection.BindingFlags.Instance);
+
+                //if (constructorMemberInfos[0].MetadataToken == token) {
+                //    var k = constructorMemberInfos[0] as System.Reflection.MemberInfo;
+                //    return (System.Reflection.MethodInfo)k; //need constructorinfo to methodinfo ...
+                //}
+
+
+                foreach (var m in source) {
+                    if (m.MetadataToken == token)
+                        return m;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Resolves an <see cref="IMethod"/> to a <see cref="MethodDef"/> and throws an exception
+        /// if it was not possible to resolve it. See also <see cref="ResolveMethodDef"/>. If
+        /// <paramref name="method"/> is a <see cref="MethodSpec"/>, then the
+        /// <see cref="MethodSpec.Method"/> property is resolved and returned.
+        /// </summary>
+        /// <param name="method">Method to resolve</param>
+        /// <returns>The <see cref="MethodDef"/></returns>
+        public static MethodDef ResolveMethodDefThrow(this IMethod method) {
 			var md = method as MethodDef;
 			if (md != null)
 				return md;
@@ -621,11 +659,108 @@ namespace dnlib.DotNet {
 		}
 	}
 
-	/// <summary>
-	/// Implemented by <see cref="MethodDef"/> and <see cref="FileDef"/>, which are the only
-	/// valid managed entry point tokens.
-	/// </summary>
-	public interface IManagedEntryPoint : ICodedToken {
+    /// <summary>
+    /// Utilties for reflection
+    /// </summary>
+    public static partial class ReflectionUtils {
+        ///// <summary>
+        ///// Get all the fields of a class
+        ///// </summary>
+        ///// <param name="type">Type object of that class</param>
+        ///// <returns></returns>
+        //public static IEnumerable<System.Reflection.FieldInfo> GetAllFields(this Type type) {
+        //    if (type == null) {
+        //        return System.Linq.Enumerable.Empty<System.Reflection.FieldInfo>();
+        //    }
+
+        //    System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Public |
+        //                         System.Reflection.BindingFlags.NonPublic |
+        //                         System.Reflection.BindingFlags.Static |
+        //                         System.Reflection.BindingFlags.Instance |
+        //                         System.Reflection.BindingFlags.DeclaredOnly;
+
+        //    return type.GetFields(flags).Union(GetAllFields(type.BaseType));
+        //}
+
+        ///// <summary>
+        ///// Get all properties of a class
+        ///// </summary>
+        ///// <param name="type">Type object of that class</param>
+        ///// <returns></returns>
+        //public static IEnumerable<System.Reflection.PropertyInfo> GetAllProperties(this Type type) {
+        //    if (type == null) {
+        //        return Enumerable.Empty<System.Reflection.PropertyInfo>();
+        //    }
+
+        //    System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Public |
+        //                         System.Reflection.BindingFlags.NonPublic |
+        //                         System.Reflection.BindingFlags.Static |
+        //                         System.Reflection.BindingFlags.Instance |
+        //                         System.Reflection.BindingFlags.DeclaredOnly;
+
+        //    return type.GetProperties(flags).Union(GetAllProperties(type.BaseType));
+        //}
+
+        ///// <summary>
+        ///// Get all constructors of a class
+        ///// </summary>
+        ///// <param name="type">Type object of that class</param>
+        ///// <returns></returns>
+        //public static IEnumerable<System.Reflection.ConstructorInfo> GetAllConstructors(this Type type) {
+        //    if (type == null) {
+        //        return Enumerable.Empty<System.Reflection.ConstructorInfo>();
+        //    }
+
+        //    System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Public |
+        //                         System.Reflection.BindingFlags.NonPublic |
+        //                         System.Reflection.BindingFlags.Static |
+        //                         System.Reflection.BindingFlags.Instance |
+        //                         System.Reflection.BindingFlags.DeclaredOnly;
+
+        //    return type.GetConstructors(flags);
+        //}
+
+        ///// <summary>
+        ///// Get all methods of a class
+        ///// </summary>
+        ///// <param name="type">Type object for that class</param>
+        ///// <returns></returns>
+        //public static List<System.Reflection.MethodInfo> GetAllMethods(this Type type) {
+        //    if (type == null) {
+        //        return null;
+        //    }
+
+        //    System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Public |
+        //                         System.Reflection.BindingFlags.NonPublic |
+        //                         System.Reflection.BindingFlags.Static |
+        //                         System.Reflection.BindingFlags.Instance |
+        //                         System.Reflection.BindingFlags.DeclaredOnly;
+
+        //    var source = type.GetMethods(flags);
+        //    var source2 = GetAllMethods(type.BaseType);
+        //    var constructorMemberInfos = type.GetMember(".ctor", 
+        //        System.Reflection.BindingFlags.CreateInstance |
+        //        System.Reflection.BindingFlags.Public |
+        //        System.Reflection.BindingFlags.NonPublic |
+        //        System.Reflection.BindingFlags.Instance)[0].;
+
+        //    List<System.Reflection.MethodInfo> dest = new List<System.Reflection.MethodInfo>();
+        //    dest.Add(constructorMemberInfos as Methodn);
+
+        //    foreach (var item in source)
+        //        if (!dest.Contains(item)) dest.Add(item);
+        //    foreach (var item in source2)
+        //        if (!dest.Contains(item)) dest.Add(item);
+
+        //    return dest;
+        //}
+    }
+
+    /// <summary>
+    /// Implemented by <see cref="MethodDef"/> and <see cref="FileDef"/>, which are the only
+    /// valid managed entry point tokens.
+    /// </summary>
+    public interface IManagedEntryPoint : ICodedToken {
 	}
 
 	/// <summary>

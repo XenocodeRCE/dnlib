@@ -3,13 +3,14 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using dnlib.DotNet.Emit;
 using dnlib.Threading;
 
 namespace dnlib.DotNet {
-	/// <summary>
-	/// <see cref="Importer"/> options
-	/// </summary>
-	[Flags]
+    /// <summary>
+    /// <see cref="Importer"/> options
+    /// </summary>
+    [Flags]
 	public enum ImporterOptions {
 		/// <summary>
 		/// Use <see cref="TypeDef"/>s whenever possible if the <see cref="TypeDef"/> is located
