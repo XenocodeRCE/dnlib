@@ -586,7 +586,43 @@ namespace dnlib.DotNet {
                     System.Reflection.BindingFlags.Instance);
 
                 //if (constructorMemberInfos[0].MetadataToken == token) {
-                //    var k = constructorMemberInfos[0] as System.Reflection.MemberInfo;
+                //    var k = constructorMemberInfos as System.Reflection.MemberInfo;
+                //    return (System.Reflection.MethodInfo)k; //need constructorinfo to methodinfo ...
+                //}
+
+
+                foreach (var m in source) {
+                    if (m.MetadataToken == token)
+                        return m;
+                }
+            }
+            return null;
+        }
+
+        public static System.Reflection.MethodInfo ResolveMethodInfo(this MethodDef method, byte[] AssemblyAsByteArray) {
+            int token = method.MDToken.ToInt32();
+            var mod = method.DeclaringType.Module;
+
+            System.Reflection.Assembly asm = System.Reflection.Assembly.Load(AssemblyAsByteArray);
+
+            System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Public |
+                                System.Reflection.BindingFlags.NonPublic |
+                                System.Reflection.BindingFlags.Static |
+                                System.Reflection.BindingFlags.Instance |
+                                System.Reflection.BindingFlags.DeclaredOnly;
+
+
+            foreach (var t in asm.GetTypes()) {
+                var source = t.GetMethods(flags);
+
+                var constructorMemberInfos = t.GetMember(".ctor",
+                    System.Reflection.BindingFlags.CreateInstance |
+                    System.Reflection.BindingFlags.Public |
+                    System.Reflection.BindingFlags.NonPublic |
+                    System.Reflection.BindingFlags.Instance);
+
+                //if (constructorMemberInfos[0].MetadataToken == token) {
+                //    var k = constructorMemberInfos as System.Reflection.MemberInfo;
                 //    return (System.Reflection.MethodInfo)k; //need constructorinfo to methodinfo ...
                 //}
 
